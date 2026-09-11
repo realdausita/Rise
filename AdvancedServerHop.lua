@@ -1,4 +1,4 @@
-loadstring(game:HttpGet("https://darahub.pages.dev/Module/Library/GUI/NotifyToast.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/realdausita/Rise/refs/heads/main/NotifyToast.lua"))()
 coroutine.wrap(function()
 local v1 = nil
 if type(identifyexecutor) == "function" then
