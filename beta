@@ -2379,49 +2379,24 @@ end
 end
 })
 autoBackslideEnabled = false
-BackSlideScreenGui = Instance.new("ScreenGui")
-BackSlideScreenGui.Name = "BackSlideBtnGui"
-BackSlideScreenGui.ResetOnSpawn = false
-BackSlideScreenGui.Parent = game:GetService("CoreGui")
-backSlideBtn = Instance.new("TextButton")
-backSlideBtn.Size = UDim2.new(0, 120, 0, 40)
-backSlideBtn.Position = UDim2.new(0.5, -60, 0.6, 0)
-backSlideBtn.Text = "BACKSLIDE: OFF"
-backSlideBtn.Font = Enum.Font.GothamBold
-backSlideBtn.TextSize = 16
-backSlideBtn.TextColor3 = Color3.new(1, 1, 1)
-backSlideBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-backSlideBtn.BorderSizePixel = 0
-backSlideBtn.Active = true
-backSlideBtn.Visible = false
-backSlideBtn.Parent = BackSlideScreenGui
-bsStroke = styleScreenButton(backSlideBtn, {
-textSize = 16,
-stroke = Color3.fromRGB(255, 49, 49),
-strokeTransparency = 0
-})
 BackSlideToggle = nil
-setButtonAction(backSlideBtn, function()
-autoBackslideEnabled = not autoBackslideEnabled
-backSlideBtn.Text = autoBackslideEnabled and "BACKSLIDE: ON" or "BACKSLIDE: OFF"
-bsStroke.Color = autoBackslideEnabled and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 49, 49)
-if BackSlideToggle then BackSlideToggle:Set(autoBackslideEnabled) end
-end)
+backSlideBtn = nil
+bsStroke = nil
 BackSlideToggle = MovementTab:Toggle({
 Title = "Auto BackSlide",
 Desc = "It automatically performs a backslide while you're sliding.",
 Value = false,
 Callback = function(state)
 autoBackslideEnabled = state
-backSlideBtn.Text = state and "BACKSLIDE: ON" or "BACKSLIDE: OFF"
-bsStroke.Color = state and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 49, 49)
+if backSlideBtn then backSlideBtn.Text = state and "BACKSLIDE: ON" or "BACKSLIDE: OFF" end
+if bsStroke then bsStroke.Color = state and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 49, 49) end
 end
 })
 MovementTab:Toggle({
 Title = "Show Auto Backslide Button",
 Value = false,
 Callback = function(state)
-backSlideBtn.Visible = state
+if backSlideBtn then backSlideBtn.Visible = state end
 end
 })
 MovementTab:Space()
@@ -2732,6 +2707,33 @@ TweenService:Create(scale, TweenInfo.new(0.15), { Scale = 1 }):Play()
 end)
 return stroke
 end
+BackSlideScreenGui = Instance.new("ScreenGui")
+BackSlideScreenGui.Name = "BackSlideBtnGui"
+BackSlideScreenGui.ResetOnSpawn = false
+BackSlideScreenGui.Parent = game:GetService("CoreGui")
+backSlideBtn = Instance.new("TextButton")
+backSlideBtn.Size = UDim2.new(0, 120, 0, 40)
+backSlideBtn.Position = UDim2.new(0.5, -60, 0.6, 0)
+backSlideBtn.Text = autoBackslideEnabled and "BACKSLIDE: ON" or "BACKSLIDE: OFF"
+backSlideBtn.Font = Enum.Font.GothamBold
+backSlideBtn.TextSize = 16
+backSlideBtn.TextColor3 = Color3.new(1, 1, 1)
+backSlideBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+backSlideBtn.BorderSizePixel = 0
+backSlideBtn.Active = true
+backSlideBtn.Visible = false
+backSlideBtn.Parent = BackSlideScreenGui
+bsStroke = styleScreenButton(backSlideBtn, {
+textSize = 16,
+stroke = Color3.fromRGB(255, 49, 49),
+strokeTransparency = 0
+})
+setButtonAction(backSlideBtn, function()
+autoBackslideEnabled = not autoBackslideEnabled
+backSlideBtn.Text = autoBackslideEnabled and "BACKSLIDE: ON" or "BACKSLIDE: OFF"
+bsStroke.Color = autoBackslideEnabled and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 49, 49)
+if BackSlideToggle then BackSlideToggle:Set(autoBackslideEnabled) end
+end)
 TrimpScreenGui = Instance.new("ScreenGui")
 TrimpScreenGui.Name = "TrimpBtnGui"
 TrimpScreenGui.ResetOnSpawn = false
@@ -7352,15 +7354,25 @@ do
 if getrawmetatable and newcclosure and setreadonly then
 VisualTab:Section({ Title = "Cola", TextSize = 20 })
 _CL = _CL or {}
+_CL.e = false
+_CL.m = false
+_CL.d = 10
+_CL.s = 15
+_CL.on = false
+_CL.old = nil
+_CL.ready = false
+_CL.init = function()
+if _CL.ready and _CL.info then return true end
+_CL.ok, _CL.err = pcall(function()
 _CL.ta = ReplicatedStorage.Events:FindFirstChild("ToolAction")
 _CL.cm = require(ReplicatedStorage.Tools.Cola)
 _CL.info = _CL.cm.Tasks[1].AutomaticFunctions[2].Methods[1].Info
-_CL.e = false
-_CL.m = false
 _CL.d = tonumber(_CL.info.Duration) or 10
 _CL.s = tonumber(_CL.info.SpeedBoost) or 15
-_CL.on = false
-_CL.old = nil
+end)
+if _CL.ok and _CL.info then _CL.ready = true return true end
+return false
+end
 _CL.vig = function()
 fireSignalFunc(ReplicatedStorage.Events.SharedUISetType.OnClientEvent, "Vignette", _CL.info.Color, _CL.m and _CL.d or _CL.info.Duration, true)
 end
@@ -7419,11 +7431,21 @@ end
 _CL.chk = function()
 if _CL.e or _CL.m then _CL.apply() else _CL.remove() end
 end
-VisualTab:Toggle({ Title = "Endless Cola", Value = false, Callback = function(state)
+_CL.t1 = VisualTab:Toggle({ Title = "Endless Cola", Value = false, Callback = function(state)
+if state and not _CL.init() then
+WindUI:Notify({ Title = "Endless Cola", Content = "Cola module not ready, try again later", Duration = 3 })
+if _CL.t1 then _CL.t1:Set(false) end
+return
+end
 _CL.e = state
 _CL.chk()
 end })
-VisualTab:Toggle({ Title = "Cola Booster", Value = false, Callback = function(state)
+_CL.t2 = VisualTab:Toggle({ Title = "Cola Booster", Value = false, Callback = function(state)
+if state and not _CL.init() then
+WindUI:Notify({ Title = "Cola Booster", Content = "Cola module not ready, try again later", Duration = 3 })
+if _CL.t2 then _CL.t2:Set(false) end
+return
+end
 _CL.m = state
 _CL.chk()
 end })
