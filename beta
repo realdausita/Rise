@@ -2138,10 +2138,16 @@ _BS.cam = workspace.CurrentCamera
 if _BS.hrp and _BS.cam then
 _BS.v = _BS.hrp.Velocity
 if _BS.v.Magnitude > 4 and _BS.v.Y > 1.5 then
+_BS.rp = _BS.rp or RaycastParams.new()
+_BS.rp.FilterType = Enum.RaycastFilterType.Blacklist
+_BS.rp.FilterDescendantsInstances = {self.Character}
+_BS.hit = workspace:Raycast(_BS.hrp.Position, Vector3.new(0, -6, 0), _BS.rp)
+if _BS.hit and _BS.hit.Normal.Y < 0.985 then
 _BS.look = _BS.cam.CFrame.LookVector
 _BS.flat = Vector3.new(_BS.look.X, 0, _BS.look.Z)
 if _BS.flat.Magnitude > 0.01 then
 _BS.hrp.CFrame = CFrame.lookAt(_BS.hrp.Position, _BS.hrp.Position - _BS.flat.Unit)
+end
 end
 end
 end
@@ -2373,12 +2379,49 @@ end
 end
 })
 autoBackslideEnabled = false
-MovementTab:Toggle({
+BackSlideScreenGui = Instance.new("ScreenGui")
+BackSlideScreenGui.Name = "BackSlideBtnGui"
+BackSlideScreenGui.ResetOnSpawn = false
+BackSlideScreenGui.Parent = game:GetService("CoreGui")
+backSlideBtn = Instance.new("TextButton")
+backSlideBtn.Size = UDim2.new(0, 120, 0, 40)
+backSlideBtn.Position = UDim2.new(0.5, -60, 0.6, 0)
+backSlideBtn.Text = "BACKSLIDE: OFF"
+backSlideBtn.Font = Enum.Font.GothamBold
+backSlideBtn.TextSize = 16
+backSlideBtn.TextColor3 = Color3.new(1, 1, 1)
+backSlideBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+backSlideBtn.BorderSizePixel = 0
+backSlideBtn.Active = true
+backSlideBtn.Visible = false
+backSlideBtn.Parent = BackSlideScreenGui
+bsStroke = styleScreenButton(backSlideBtn, {
+textSize = 16,
+stroke = Color3.fromRGB(255, 49, 49),
+strokeTransparency = 0
+})
+BackSlideToggle = nil
+setButtonAction(backSlideBtn, function()
+autoBackslideEnabled = not autoBackslideEnabled
+backSlideBtn.Text = autoBackslideEnabled and "BACKSLIDE: ON" or "BACKSLIDE: OFF"
+bsStroke.Color = autoBackslideEnabled and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 49, 49)
+if BackSlideToggle then BackSlideToggle:Set(autoBackslideEnabled) end
+end)
+BackSlideToggle = MovementTab:Toggle({
 Title = "Auto BackSlide",
 Desc = "It automatically performs a backslide while you're sliding.",
 Value = false,
 Callback = function(state)
 autoBackslideEnabled = state
+backSlideBtn.Text = state and "BACKSLIDE: ON" or "BACKSLIDE: OFF"
+bsStroke.Color = state and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 49, 49)
+end
+})
+MovementTab:Toggle({
+Title = "Show Auto Backslide Button",
+Value = false,
+Callback = function(state)
+backSlideBtn.Visible = state
 end
 })
 MovementTab:Space()
@@ -7974,15 +8017,30 @@ end
 do
 AutoTab:Section({ Title = "loc:SEC_AUTO_CARRY", TextSize = 20 })
 AutoTab:Toggle({ Title = "Force Carry", Value = false, Callback = function(s)
-pcall(function()
-_FC = _FC or {}
-if not _FC.t then _FC.t = require(ReplicatedStorage.Services.Asset.InteractionService.InteractionTypes) end
-if _FC.t and _FC.t.Revive and _FC.t.Revive.Interactions then
-for _, v in ipairs(_FC.t.Revive.Interactions) do
-if v.Name == "Carry" then v.Requirements.CanBeCarried = s and nil or true end
+_FC = _FC or {t = nil, n = 0}
+_FC.ok, _FC.err = pcall(function()
+if not _FC.t then
+_FC.t = require(ReplicatedStorage.Services.Asset.InteractionService.InteractionTypes)
+end
+_FC.n = 0
+for _, grp in pairs(_FC.t) do
+if type(grp) == "table" and type(grp.Interactions) == "table" then
+for _, v in ipairs(grp.Interactions) do
+if type(v) == "table" and v.Name == "Carry" then
+if type(v.Requirements) ~= "table" then v.Requirements = {} end
+v.Requirements.CanBeCarried = s and nil or true
+_FC.n = _FC.n + 1
 end
 end
+end
+end
+if _FC.n == 0 then error("Carry interaction not found") end
 end)
+if _FC.ok then
+WindUI:Notify({ Title = "Force Carry", Content = s and ("Enabled (" .. tostring(_FC.n) .. " interaction)") or "Disabled - back to normal", Duration = 2 })
+else
+WindUI:Notify({ Title = "Force Carry", Content = "Error: " .. tostring(_FC.err), Duration = 4 })
+end
 end })
 AutoCarry = false
 AutoCarryConnection = nil
