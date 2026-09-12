@@ -4379,6 +4379,299 @@ SpecialRoundEnabled = state
 handleTimerToggles()
 end
 })
+_PS = _PS or {en = false, g = nil, tl = {}, ff = {}, oc = {}, cons = {}}
+_PS.fmt = function(num)
+_PS.s = tostring(math.floor(num))
+_PS.f = ""
+_PS.l = #_PS.s
+for i = 1, _PS.l do
+_PS.f = _PS.f .. _PS.s:sub(i, i)
+if (_PS.l - i) % 3 == 0 and i ~= _PS.l then _PS.f = _PS.f .. "," end
+end
+return _PS.f
+end
+_PS.fit = function(fr, tl)
+if not fr or not tl then return end
+_PS.tb = tl.TextBounds
+fr.Size = UDim2.new(0, _PS.tb.X + 20, 1, 0)
+end
+_PS.row = function(name, dv, tc, icon, ic, lo, col)
+_PS.ct = Instance.new("Frame")
+_PS.ct.Name = name
+_PS.ct.BackgroundTransparency = 1
+_PS.ct.Size = UDim2.fromScale(1, 1)
+_PS.ct.LayoutOrder = lo
+_PS.ct.Parent = col
+_PS.bg = Instance.new("ImageLabel")
+_PS.bg.Name = "Background"
+_PS.bg.BackgroundTransparency = 1
+_PS.bg.Image = "rbxassetid://196969716"
+_PS.bg.ImageColor3 = Color3.fromRGB(21, 21, 21)
+_PS.bg.ImageTransparency = 0.4
+_PS.bg.AnchorPoint = Vector2.new(0.5, 0.5)
+_PS.bg.Position = UDim2.fromScale(0.5, 0.5)
+_PS.bg.Size = UDim2.fromScale(1.25, 1.25)
+_PS.bg.ZIndex = 1
+_PS.bg.Parent = _PS.ct
+_PS.bc = Instance.new("UICorner")
+_PS.bc.CornerRadius = UDim.new(0, 4)
+_PS.bc.Parent = _PS.bg
+_PS.icn = Instance.new("ImageLabel")
+_PS.icn.BackgroundTransparency = 1
+_PS.icn.Image = "rbxassetid://" .. icon
+if ic then _PS.icn.ImageColor3 = ic end
+_PS.icn.AnchorPoint = Vector2.new(0.5, 0.5)
+_PS.icn.Position = UDim2.fromScale(0.5, 0.5)
+_PS.icn.Size = UDim2.fromScale(0.8, 0.8)
+_PS.icn.ZIndex = 3
+_PS.icn.Parent = _PS.ct
+_PS.ia = Instance.new("UIAspectRatioConstraint")
+_PS.ia.Parent = _PS.icn
+_PS.tx = Instance.new("TextLabel")
+_PS.tx.Name = "Value"
+_PS.tx.BackgroundTransparency = 1
+_PS.tx.Font = Enum.Font.GothamBold
+_PS.tx.Text = tostring(dv)
+_PS.tx.TextColor3 = tc
+_PS.tx.TextScaled = true
+_PS.tx.TextSize = 14
+_PS.tx.TextStrokeTransparency = 0.9
+_PS.tx.TextWrapped = true
+_PS.tx.TextXAlignment = Enum.TextXAlignment.Left
+_PS.tx.AnchorPoint = Vector2.new(0, 0.5)
+_PS.tx.Position = UDim2.new(1.3, 0, 0.5, 0)
+_PS.tx.Size = UDim2.new(6, 0, 0.8, 0)
+_PS.tx.ZIndex = 3
+_PS.tx.Parent = _PS.ct
+_PS.tl[name] = _PS.tx
+_PS.st = Instance.new("UIStroke")
+_PS.st.Thickness = 2
+_PS.st.Transparency = 0.5
+_PS.st.Parent = _PS.tx
+_PS.cl = Instance.new("Frame")
+_PS.cl.BackgroundTransparency = 1
+_PS.cl.ClipsDescendants = true
+_PS.cl.Size = UDim2.fromScale(1, 1)
+_PS.cl.ZIndex = 2
+_PS.cl.Parent = _PS.ct
+_PS.le = Instance.new("Frame")
+_PS.le.BackgroundColor3 = Color3.new(0, 0, 0)
+_PS.le.BackgroundTransparency = 0.45
+_PS.le.Size = UDim2.new(2, 0, 1, 0)
+_PS.le.ZIndex = 2
+_PS.le.Parent = _PS.cl
+_PS.lc2 = Instance.new("UICorner")
+_PS.lc2.CornerRadius = UDim.new(0, 4)
+_PS.lc2.Parent = _PS.le
+_PS.cf = Instance.new("Frame")
+_PS.cf.Name = "Front"
+_PS.cf.BackgroundTransparency = 1
+_PS.cf.ClipsDescendants = true
+_PS.cf.Position = UDim2.new(1, 0, 0, 0)
+_PS.cf.Size = UDim2.new(0.5, 33, 1, 0)
+_PS.cf.ZIndex = 2
+_PS.cf.Parent = _PS.ct
+_PS.fe = Instance.new("Frame")
+_PS.fe.BackgroundColor3 = Color3.new(0, 0, 0)
+_PS.fe.BackgroundTransparency = 0.9
+_PS.fe.Position = UDim2.new(-1, 0, 0, 0)
+_PS.fe.Size = UDim2.new(2, 0, 1, 0)
+_PS.fe.ZIndex = 2
+_PS.fe.Parent = _PS.cf
+_PS.fc2 = Instance.new("UICorner")
+_PS.fc2.CornerRadius = UDim.new(0, 4)
+_PS.fc2.Parent = _PS.fe
+_PS.ff[name] = {frame = _PS.cf, effect = _PS.fe, textLabel = _PS.tx}
+task.spawn(function(cf, tx)
+task.wait()
+_PS.fit(cf, tx)
+end, _PS.cf, _PS.tx)
+return _PS.tx
+end
+_PS.updCur = function()
+_PS.ac = _PS.uc.All()
+if _PS.tl["Tokens"] and _PS.ac["Tokens"] then _PS.tl["Tokens"].Text = _PS.fmt(_PS.ac["Tokens"]) end
+if _PS.tl["Points"] and _PS.ac["Points"] then _PS.tl["Points"].Text = _PS.fmt(_PS.ac["Points"]) end
+if _PS.tl["Survivals"] and _PS.ac["Survivals"] then _PS.tl["Survivals"].Text = _PS.fmt(_PS.ac["Survivals"]) end
+if _PS.tl["Streak"] and _PS.ac["Streak"] then _PS.tl["Streak"].Text = _PS.fmt(_PS.ac["Streak"]) end
+for _, dd in pairs(_PS.ff) do
+if dd.frame and dd.textLabel then _PS.fit(dd.frame, dd.textLabel) end
+end
+end
+_PS.updPr = function()
+if not _PS.g then return end
+_PS.lv = _PS.up.Level()
+_PS.xp = _PS.up.XP()
+_PS.rx = _PS.up.RequiredXP() or (_PS.lv * 100)
+_PS.pg = _PS.up.Progress() or 0
+_PS.g.levelText.Text = "LEVEL " .. tostring(_PS.lv)
+_PS.g.expText.Text = _PS.fmt(_PS.xp) .. "/" .. _PS.fmt(_PS.rx)
+_PS.g.fill.Size = UDim2.new(math.clamp(_PS.pg, 0, 1), 0, 1, 0)
+end
+_PS.updEv = function()
+if _PS.tl["Tickets"] then
+_PS.tl["Tickets"].Text = _PS.fmt(_PS.ue.Balance())
+_PS.ed = _PS.ff["Tickets"]
+if _PS.ed and _PS.ed.frame and _PS.ed.textLabel then _PS.fit(_PS.ed.frame, _PS.ed.textLabel) end
+end
+end
+_PS.off = function()
+_PS.en = false
+for _, dc in pairs(_PS.oc) do
+if type(dc) == "function" then dc() end
+end
+_PS.oc = {}
+for _, c in pairs(_PS.cons) do
+pcall(function() c:Disconnect() end)
+end
+_PS.cons = {}
+if _PS.g then
+_PS.g.ScreenGui:Destroy()
+_PS.g = nil
+end
+_PS.tl = {}
+_PS.ff = {}
+end
+_PS.on = function()
+if _PS.g then _PS.off() end
+_PS.uc = _PS.uc or require(ReplicatedStorage.Shared.UserData.ClientHooks.useCurrency)
+_PS.up = _PS.up or require(ReplicatedStorage.Shared.UserData.ClientHooks.useProgression)
+_PS.ue = _PS.ue or require(ReplicatedStorage.Shared.UserData.ClientHooks.useEvent)
+_PS.sg = Instance.new("ScreenGui")
+_PS.sg.Name = "PlayerStats"
+_PS.sg.ResetOnSpawn = false
+_PS.sg.DisplayOrder = 333
+_PS.sg.Parent = PlayerGui
+_PS.vw = Instance.new("Frame")
+_PS.vw.Name = "Views"
+_PS.vw.BackgroundTransparency = 1
+_PS.vw.Size = UDim2.fromScale(1, 1)
+_PS.vw.Position = UDim2.fromScale(0.5, 0.5)
+_PS.vw.AnchorPoint = Vector2.new(0.5, 0.5)
+_PS.vw.Parent = _PS.sg
+_PS.dv2 = Instance.new("Frame")
+_PS.dv2.Name = "Default"
+_PS.dv2.BackgroundTransparency = 1
+_PS.dv2.Size = UDim2.fromScale(1, 1)
+_PS.dv2.Parent = _PS.vw
+_PS.bt = Instance.new("Frame")
+_PS.bt.Name = "Bottom"
+_PS.bt.BackgroundTransparency = 1
+_PS.bt.Position = UDim2.fromScale(0.01, 0.01)
+_PS.bt.Size = UDim2.fromScale(0.98, 0.98)
+_PS.bt.Parent = _PS.dv2
+_PS.ar = Instance.new("UIAspectRatioConstraint")
+_PS.ar.Parent = _PS.bt
+_PS.sc = Instance.new("UISizeConstraint")
+_PS.sc.MinSize = Vector2.new(450, 450)
+_PS.sc.MaxSize = Vector2.new(700, 700)
+_PS.sc.Parent = _PS.bt
+_PS.lc = Instance.new("Frame")
+_PS.lc.Name = "Left"
+_PS.lc.BackgroundTransparency = 1
+_PS.lc.Position = UDim2.new(0.004, 0, 0.06, 0)
+_PS.lc.Size = UDim2.new(0.05, 0, 0.05, 0)
+_PS.lc.Parent = _PS.bt
+_PS.ll = Instance.new("UIListLayout")
+_PS.ll.Padding = UDim.new(0.175, 0)
+_PS.ll.SortOrder = Enum.SortOrder.LayoutOrder
+_PS.ll.Parent = _PS.lc
+_PS.row("Tokens", "0", Color3.fromRGB(163, 255, 87), "7149239101", Color3.fromRGB(163, 255, 87), 1, _PS.lc)
+_PS.row("Points", "0", Color3.new(1, 1, 1), "4648327306", nil, 2, _PS.lc)
+_PS.row("Survivals", "0", Color3.fromRGB(255, 188, 110), "88681516628510", Color3.fromRGB(255, 201, 162), 3, _PS.lc)
+_PS.row("Tickets", "0", Color3.fromRGB(255, 121, 121), "14478137255", Color3.fromRGB(255, 115, 115), 4, _PS.lc)
+_PS.row("Streak", "0", Color3.fromRGB(255, 217, 78), "13518130183", Color3.fromRGB(255, 217, 78), 5, _PS.lc)
+_PS.lb = Instance.new("Frame")
+_PS.lb.Name = "Level"
+_PS.lb.BackgroundColor3 = Color3.fromRGB(105, 138, 255)
+_PS.lb.BackgroundTransparency = 0.9
+_PS.lb.Position = UDim2.new(0, 4, 0, 4)
+_PS.lb.Size = UDim2.new(0.7, 0, 0.016, 0)
+_PS.lb.Parent = _PS.bt
+_PS.lk = Instance.new("UICorner")
+_PS.lk.CornerRadius = UDim.new(0.5, 0)
+_PS.lk.Parent = _PS.lb
+_PS.ls = Instance.new("UIStroke")
+_PS.ls.Thickness = 2
+_PS.ls.Transparency = 0.5
+_PS.ls.Parent = _PS.lb
+_PS.bc2 = Instance.new("Frame")
+_PS.bc2.Name = "Bar"
+_PS.bc2.BackgroundTransparency = 1
+_PS.bc2.ClipsDescendants = true
+_PS.bc2.Size = UDim2.new(1, 0, 1, 0)
+_PS.bc2.Parent = _PS.lb
+_PS.fl = Instance.new("Frame")
+_PS.fl.BackgroundColor3 = Color3.fromRGB(105, 138, 255)
+_PS.fl.BackgroundTransparency = 0.2
+_PS.fl.Size = UDim2.new(0, 0, 1, 0)
+_PS.fl.ZIndex = 2
+_PS.fl.Parent = _PS.bc2
+_PS.fk = Instance.new("UICorner")
+_PS.fk.CornerRadius = UDim.new(0.5, 0)
+_PS.fk.Parent = _PS.fl
+_PS.gr = Instance.new("UIGradient")
+_PS.gr.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(0.3149, Color3.fromRGB(241, 246, 249)), ColorSequenceKeypoint.new(1, Color3.fromRGB(168, 201, 222))})
+_PS.gr.Rotation = 90
+_PS.gr.Parent = _PS.fl
+_PS.lt = Instance.new("TextLabel")
+_PS.lt.Name = "Level"
+_PS.lt.BackgroundTransparency = 1
+_PS.lt.Font = Enum.Font.GothamBold
+_PS.lt.Text = "LEVEL 1"
+_PS.lt.TextColor3 = Color3.fromRGB(105, 138, 255)
+_PS.lt.TextScaled = true
+_PS.lt.TextWrapped = true
+_PS.lt.TextXAlignment = Enum.TextXAlignment.Left
+_PS.lt.TextYAlignment = Enum.TextYAlignment.Bottom
+_PS.lt.Position = UDim2.new(0, 0, 1.25, 0)
+_PS.lt.Size = UDim2.new(0.5, 0, 1.5, 0)
+_PS.lt.Parent = _PS.lb
+_PS.lz = Instance.new("UIStroke")
+_PS.lz.Thickness = 2
+_PS.lz.Transparency = 0.5
+_PS.lz.Parent = _PS.lt
+_PS.et = Instance.new("TextLabel")
+_PS.et.Name = "Experience"
+_PS.et.BackgroundTransparency = 1
+_PS.et.Font = Enum.Font.GothamBold
+_PS.et.Text = "0/100"
+_PS.et.TextColor3 = Color3.fromRGB(105, 138, 255)
+_PS.et.TextScaled = true
+_PS.et.TextWrapped = true
+_PS.et.TextXAlignment = Enum.TextXAlignment.Right
+_PS.et.TextYAlignment = Enum.TextYAlignment.Bottom
+_PS.et.AnchorPoint = Vector2.new(1, 0)
+_PS.et.Position = UDim2.new(1, 0, 1.25, 0)
+_PS.et.Size = UDim2.new(0.5, 0, 1.25, 0)
+_PS.et.Parent = _PS.lb
+_PS.ez = Instance.new("UIStroke")
+_PS.ez.Thickness = 2
+_PS.ez.Transparency = 0.5
+_PS.ez.Parent = _PS.et
+_PS.g = {ScreenGui = _PS.sg, levelText = _PS.lt, expText = _PS.et, fill = _PS.fl}
+_PS.en = true
+table.insert(_PS.oc, _PS.uc.Observe(_PS.updCur))
+table.insert(_PS.oc, _PS.up.Observe(_PS.updPr))
+table.insert(_PS.oc, _PS.ue.Observe(_PS.updEv))
+_PS.updCur()
+_PS.updPr()
+_PS.updEv()
+for name, dd in pairs(_PS.ff) do
+if dd.textLabel then
+table.insert(_PS.cons, dd.textLabel:GetPropertyChangedSignal("Text"):Connect(function()
+if _PS.en then _PS.fit(dd.frame, dd.textLabel) end
+end))
+end
+end
+end
+VisualTab:Toggle({
+Title = "Show Player Stats",
+Value = false,
+Callback = function(state)
+if state then _PS.on() else _PS.off() end
+end
+})
 VisualTab:Section({Title = "loc:SEC_TOOL_SKIN"})
 VisualTab:Input({
 Title = "Tool Name",
@@ -5824,6 +6117,406 @@ defibrillator.ReviveDelay = tonumber(value) or 0
 end
 })
 UtilityTab = Window:Tab({ Title = 'loc:TAB_UTILITY', Icon = 'wrench' })
+do
+ShopTab = Window:Tab({ Title = "Shop", Icon = "shopping-cart" })
+ShopTab:Section({ Title = "Daily Shop", TextSize = 20 })
+_SH = _SH or {loaded = false, ids = {}, names = {}, byName = {}, sel = nil, lf = {}}
+_SH.loadBtn = ShopTab:Button({ Title = "Load Shop Automation", Callback = function()
+pcall(function() _SH.loadBtn:Destroy() end)
+pcall(function()
+_SH.inv = require(ReplicatedStorage.Shared.UserData.ClientHooks.useInventory)
+_SH.reg = require(ReplicatedStorage.Items.Registry)
+_SH.cur = require(ReplicatedStorage.Shared.UserData.ClientHooks.useCurrency)
+_SH.buy = ReplicatedStorage.Shared.UserData.Events.Requests.Purchase
+_SH.get = ReplicatedStorage.Shared.UserData.Events.Functions.GetDailyShop
+_SH.safe = function(fn, ...)
+_SH.ok, _SH.res = pcall(fn, ...)
+if not _SH.ok then
+if not string.find(_SH.res, "cannot access 'Instance'") then warn("Shop:", _SH.res) end
+return nil
+end
+return _SH.res
+end
+_SH.otype = function(id)
+_SH.cfg = _SH.safe(_SH.reg.GetConfig, _SH.reg, id)
+if _SH.cfg and _SH.cfg.PurchaseInfo and _SH.cfg.PurchaseInfo.OwnershipType then return _SH.cfg.PurchaseInfo.OwnershipType end
+return "Single"
+end
+_SH.owned = function(id)
+if _SH.otype(id) == "Multiple" then return "multiple" end
+_SH.ol = _SH.safe(_SH.inv.OwnedIds, _SH.inv) or {}
+for _, oid in ipairs(_SH.ol) do
+if oid == id then return "owned" end
+end
+return "notowned"
+end
+_SH.tryBuy = function(id)
+_SH.c2 = _SH.reg.GetConfig(id)
+if _SH.c2 and _SH.c2.PurchaseInfo then
+_SH.pr2 = _SH.c2.PurchaseInfo.Price
+_SH.cu2 = _SH.c2.PurchaseInfo.Currency
+if _SH.cu2 and _SH.pr2 then
+_SH.bl = _SH.cur.All()
+_SH.bl = _SH.bl and _SH.bl[_SH.cu2]
+if _SH.bl and _SH.bl >= _SH.pr2 then
+_SH.ow2 = _SH.owned(id)
+if _SH.ow2 ~= "owned" or _SH.otype(id) == "Multiple" then
+_SH.safe(_SH.buy.FireServer, _SH.buy, id, 1)
+end
+end
+end
+end
+end
+_SH.buildNames = function()
+_SH.nl = {}
+_SH.byName = {}
+for _, id in ipairs(_SH.ids) do
+_SH.c = _SH.reg.GetConfig(id)
+_SH.nm = "Unknown " .. tostring(id)
+_SH.pr = "?"
+_SH.cu = ""
+_SH.st = "NOT OWNED"
+if _SH.c then
+if _SH.c.AppearanceInfo and _SH.c.AppearanceInfo.Name then _SH.nm = _SH.c.AppearanceInfo.Name
+elseif _SH.c.Name then _SH.nm = _SH.c.Name end
+if _SH.c.PurchaseInfo then
+_SH.pr = _SH.c.PurchaseInfo.Price or "?"
+_SH.cu = _SH.c.PurchaseInfo.Currency or ""
+end
+if _SH.c.PurchaseInfo and _SH.c.PurchaseInfo.OwnershipType == "Multiple" then _SH.st = "MULTIPLE"
+else
+_SH.ow = _SH.owned(id)
+if _SH.ow == "owned" then _SH.st = "OWNED"
+elseif _SH.ow == "multiple" then _SH.st = "MULTIPLE" end
+end
+end
+_SH.byName[_SH.nm] = id
+table.insert(_SH.nl, { Title = _SH.nm, Desc = tostring(_SH.pr) .. " " .. _SH.cu .. " | " .. _SH.st })
+end
+if #_SH.nl == 0 then _SH.nl = {{ Title = "No daily items", Desc = "" }} end
+return _SH.nl
+end
+_SH.fetch = function()
+_SH.r = _SH.safe(function() return _SH.get:InvokeServer() end)
+_SH.ids = {}
+if _SH.r and _SH.r.slots then
+for _, sd in pairs(_SH.r.slots) do
+if sd.itemId then
+_SH.dup = false
+for _, eid in ipairs(_SH.ids) do
+if eid == sd.itemId then _SH.dup = true break end
+end
+if not _SH.dup then table.insert(_SH.ids, sd.itemId) end
+end
+end
+end
+_SH.names = _SH.buildNames()
+if _SH.dd then _SH.dd:Refresh(_SH.names, true) end
+end
+_SH.startLoop = function(k, f)
+_SH.lf[k] = true
+task.spawn(function()
+while _SH.lf[k] do
+_SH.ok2, _SH.err2 = pcall(f)
+if not _SH.ok2 then
+if not string.find(_SH.err2, "cannot access 'Instance'") then warn("Shop loop:", _SH.err2) end
+end
+task.wait(0.4)
+end
+end)
+end
+_SH.stopLoop = function(k)
+_SH.lf[k] = false
+end
+_SH.fetch()
+_SH.dd = ShopTab:Dropdown({ Title = "Select Daily Item", Values = _SH.names, Value = _SH.names[1].Title, Callback = function(opt)
+_SH.sel = opt
+end })
+ShopTab:Button({ Title = "Refresh Daily Shop", Icon = "refresh-cw", Callback = function() _SH.fetch() end })
+ShopTab:Toggle({ Title = "Auto Buy All Daily Items", Value = false, Callback = function(state)
+if state then _SH.startLoop("all", function()
+for _, id in ipairs(_SH.ids) do _SH.tryBuy(id) end
+end)
+else _SH.stopLoop("all") end
+end })
+ShopTab:Toggle({ Title = "Auto Buy Selected", Value = false, Callback = function(state)
+if state then _SH.startLoop("sel", function()
+_SH.so = _SH.dd and _SH.dd.Value
+_SH.st2 = nil
+if type(_SH.so) == "table" then _SH.st2 = _SH.so.Title
+elseif type(_SH.so) == "string" then _SH.st2 = _SH.so end
+_SH.sid = _SH.st2 and _SH.byName[_SH.st2]
+_SH.sid = tonumber(_SH.sid) or _SH.sid
+if _SH.sid then _SH.tryBuy(_SH.sid) end
+end)
+else _SH.stopLoop("sel") end
+end })
+_SH.bp = _SH.safe(require, ReplicatedStorage.Shared.UserData.ClientHooks.useEvent)
+_SH.bpCfg = _SH.safe(require, ReplicatedStorage.Shared.UserData.Battlepass.Config)
+_SH.pbp = ReplicatedStorage.Shared.UserData.Events.Requests.PurchaseBattlepassItem
+_SH.buildTokOpts = function(tn)
+_SH.te2 = _SH.tok[tn]
+_SH.to = {}
+_SH.te2.byTitle = {}
+for _, id in ipairs(_SH.te2.items) do
+_SH.tc = _SH.reg.GetConfig(id)
+_SH.tn2 = "Unknown"
+_SH.tpr = 0
+_SH.tcu = ""
+_SH.tds = "No description"
+if _SH.tc then
+if _SH.tc.AppearanceInfo and _SH.tc.AppearanceInfo.Name then _SH.tn2 = _SH.tc.AppearanceInfo.Name
+elseif _SH.tc.Name then _SH.tn2 = _SH.tc.Name end
+if _SH.tc.PurchaseInfo then
+_SH.tpr = _SH.tc.PurchaseInfo.Price or 0
+_SH.tcu = _SH.tc.PurchaseInfo.Currency or ""
+end
+if _SH.tc.AppearanceInfo and _SH.tc.AppearanceInfo.Desc then _SH.tds = _SH.tc.AppearanceInfo.Desc end
+end
+_SH.tot2 = "Single"
+if _SH.tc and _SH.tc.PurchaseInfo and _SH.tc.PurchaseInfo.OwnershipType then _SH.tot2 = _SH.tc.PurchaseInfo.OwnershipType end
+if _SH.tot2 == "Multiple" then _SH.tst = "MULTIPLE"
+else
+_SH.tow = _SH.owned(id)
+if _SH.tow == "owned" then _SH.tst = "OWNED"
+elseif _SH.tow == "multiple" then _SH.tst = "MULTIPLE"
+else _SH.tst = "NOT OWNED" end
+end
+_SH.dp = _SH.tpr and (_SH.tpr * _SH.te2.amt) or "?"
+_SH.te2.byTitle[_SH.tn2] = id
+table.insert(_SH.to, { Title = _SH.tn2, Desc = tostring(_SH.dp) .. " " .. _SH.tcu .. " | " .. _SH.tst .. " | " .. _SH.tds })
+end
+if #_SH.to == 0 then _SH.to = {{ Title = "No token items", Desc = "" }} end
+return _SH.to
+end
+_SH.tok = _SH.tok or {}
+_SH.buildTokSec = function(tn, ids, isMulti)
+_SH.ts = ShopTab:Section({ Title = tn .. " (" .. #ids .. ")", TextSize = 16 })
+_SH.tok[tn] = {items = ids, amt = 1, sel = nil, byTitle = {}, dd = nil}
+_SH.tok[tn].opts = _SH.buildTokOpts(tn)
+_SH.tok[tn].dd = _SH.ts:Dropdown({ Title = "Select Item", Values = _SH.tok[tn].opts, Value = _SH.tok[tn].opts[1].Title, Callback = function(opt)
+if type(opt) == "table" then _SH.tok[tn].sel = opt.Title
+else _SH.tok[tn].sel = opt end
+end })
+if isMulti then
+_SH.ts:Input({ Title = "Auto Buy Amount", Placeholder = "1", NumbersOnly = true, Callback = function(v)
+_SH.na = tonumber(v) or 1
+if _SH.na < 1 then _SH.na = 1 end
+_SH.tok[tn].amt = _SH.na
+_SH.tok[tn].dd:Refresh(_SH.buildTokOpts(tn), true)
+end })
+end
+_SH.ts:Toggle({ Title = "Auto Buy Selected Item", Value = false, Callback = function(state)
+if state then _SH.startLoop("tok_" .. tn .. "_s", function()
+_SH.tid = _SH.tok[tn].sel and _SH.tok[tn].byTitle[_SH.tok[tn].sel]
+_SH.tid = tonumber(_SH.tid) or _SH.tid
+if _SH.tid then
+if isMulti then
+_SH.mc = _SH.reg.GetConfig(_SH.tid)
+if _SH.mc and _SH.mc.PurchaseInfo then
+_SH.mp = _SH.mc.PurchaseInfo.Price
+_SH.mu = _SH.mc.PurchaseInfo.Currency
+if _SH.mu and _SH.mp then
+_SH.mt = _SH.mp * _SH.tok[tn].amt
+_SH.mb = _SH.cur.All()
+_SH.mb = _SH.mb and _SH.mb[_SH.mu]
+if _SH.mb and _SH.mb >= _SH.mt then
+_SH.safe(_SH.buy.FireServer, _SH.buy, _SH.tid, _SH.tok[tn].amt)
+end
+end
+end
+else
+_SH.tryBuy(_SH.tid)
+end
+end
+end)
+else _SH.stopLoop("tok_" .. tn .. "_s") end
+end })
+_SH.ts:Toggle({ Title = "Auto Buy All Items", Value = false, Callback = function(state)
+if state then _SH.startLoop("tok_" .. tn .. "_a", function()
+for _, id in ipairs(_SH.tok[tn].items) do
+if isMulti then
+_SH.mc2 = _SH.reg.GetConfig(id)
+if _SH.mc2 and _SH.mc2.PurchaseInfo then
+_SH.mp2 = _SH.mc2.PurchaseInfo.Price
+_SH.mu2 = _SH.mc2.PurchaseInfo.Currency
+if _SH.mu2 and _SH.mp2 then
+_SH.mt2 = _SH.mp2 * _SH.tok[tn].amt
+_SH.mb2 = _SH.cur.All()
+_SH.mb2 = _SH.mb2 and _SH.mb2[_SH.mu2]
+if _SH.mb2 and _SH.mb2 >= _SH.mt2 then
+_SH.safe(_SH.buy.FireServer, _SH.buy, id, _SH.tok[tn].amt)
+end
+end
+end
+else
+_SH.tryBuy(id)
+end
+end
+end)
+else _SH.stopLoop("tok_" .. tn .. "_a") end
+end })
+end
+_SH.td = _SH.reg.GetAll()
+_SH.byType = {}
+_SH.multiByType = {}
+for id, _ in pairs(_SH.td) do
+_SH.c3 = _SH.reg.GetConfig(id)
+if _SH.c3 and _SH.c3.PurchaseInfo then
+_SH.pu = _SH.c3.PurchaseInfo
+if _SH.pu.Currency == "Tokens" and _SH.pu.AppearsIn == "Shop" then
+_SH.st3 = "Misc"
+if _SH.c3.EquipInfo and _SH.c3.EquipInfo.SlotType then _SH.st3 = _SH.c3.EquipInfo.SlotType end
+if (_SH.pu.OwnershipType or "Single") == "Multiple" then
+_SH.multiByType[_SH.st3] = _SH.multiByType[_SH.st3] or {}
+table.insert(_SH.multiByType[_SH.st3], id)
+else
+_SH.byType[_SH.st3] = _SH.byType[_SH.st3] or {}
+table.insert(_SH.byType[_SH.st3], id)
+end
+end
+end
+end
+_SH.tsec = ShopTab:Section({ Title = "Token Shop", TextSize = 20 })
+for tn, ids in pairs(_SH.byType) do
+_SH.buildTokSec(tn, ids, false)
+end
+for tn, ids in pairs(_SH.multiByType) do
+_SH.buildTokSec(tn .. " (Multi)", ids, true)
+end
+if _SH.bp and _SH.bpCfg and _SH.pbp then
+_SH.bpPrice = function(id)
+for _, sd2 in pairs(_SH.bpCfg) do
+if sd2.Tiers then
+for _, tr in pairs(sd2.Tiers) do
+if tr.items then
+for _, it in ipairs(tr.items) do
+_SH.iid = it.itemId or it.id
+if _SH.iid == id then return it.price or it.cost or 0 end
+end
+end
+end
+end
+end
+return 0
+end
+_SH.tierInfo = function(id)
+for _, sd3 in pairs(_SH.bpCfg) do
+if sd3.Tiers then
+for ti, tr2 in pairs(sd3.Tiers) do
+if tr2.items then
+for _, it2 in ipairs(tr2.items) do
+_SH.iid2 = it2.itemId or it2.id
+if _SH.iid2 == id then return ti, tr2.unlocked, tr2.timeOpen end
+end
+end
+end
+end
+end
+return nil, nil, nil
+end
+_SH.buildEvOpts = function()
+_SH.eo = {}
+_SH.evByTitle = {}
+_SH.tiers = _SH.safe(_SH.bp.GetTiers, _SH.bp) or {}
+for _, tier in ipairs(_SH.tiers) do
+if tier.items then
+for _, item in ipairs(tier.items) do
+_SH.eid = nil
+if type(item) == "table" then _SH.eid = item.itemId or item.id
+else _SH.eid = item end
+if _SH.eid then
+_SH.ec = _SH.reg.GetConfig(_SH.eid)
+_SH.enm = "Unknown"
+if _SH.ec and _SH.ec.AppearanceInfo and _SH.ec.AppearanceInfo.Name then _SH.enm = _SH.ec.AppearanceInfo.Name
+elseif _SH.ec and _SH.ec.Name then _SH.enm = _SH.ec.Name end
+_SH.eds = "No description"
+if _SH.ec and _SH.ec.AppearanceInfo and _SH.ec.AppearanceInfo.Desc then _SH.eds = _SH.ec.AppearanceInfo.Desc end
+_SH.eow = _SH.owned(_SH.eid)
+if _SH.eow == "owned" then _SH.est = "OWNED"
+elseif _SH.eow == "multiple" then _SH.est = "MULTIPLE"
+else _SH.est = "NOT OWNED" end
+_SH.epr = _SH.bpPrice(_SH.eid)
+_SH.ept = _SH.epr > 0 and ("Tickets: " .. _SH.epr) or "Free"
+_SH.eop = tier.timeOpen and "Open" or "Locked"
+_SH.evByTitle[_SH.enm] = _SH.eid
+table.insert(_SH.eo, { Title = _SH.enm, Desc = "Tier " .. tier.index .. " | " .. _SH.ept .. " | " .. _SH.est .. " | " .. _SH.eop })
+end
+end
+end
+end
+if #_SH.eo == 0 then _SH.eo = {{ Title = "No event items", Desc = "" }} end
+return _SH.eo
+end
+_SH.esec = ShopTab:Section({ Title = "Event Shop", TextSize = 20 })
+_SH.evDd = _SH.esec:Dropdown({ Title = "Select Battle Pass Item", Values = _SH.buildEvOpts(), Value = _SH.eo[1].Title, Callback = function(opt)
+if type(opt) == "table" then _SH.esel = opt.Title
+else _SH.esel = opt end
+end })
+_SH.esec:Toggle({ Title = "Auto Buy Selected Item", Value = false, Callback = function(state)
+if state then _SH.startLoop("ev_s", function()
+_SH.vid = _SH.esel and _SH.evByTitle[_SH.esel]
+_SH.vid = tonumber(_SH.vid) or _SH.vid
+if _SH.vid then
+_SH.vp = _SH.bpPrice(_SH.vid)
+_SH.vb = _SH.safe(_SH.cur.Balance, _SH.cur, "Tickets")
+if _SH.vb and _SH.vb >= _SH.vp then
+_SH.vo = _SH.owned(_SH.vid)
+if _SH.vo ~= "owned" or _SH.otype(_SH.vid) == "Multiple" then
+_SH.ti, _SH.un, _SH.to3 = _SH.tierInfo(_SH.vid)
+if _SH.un and _SH.to3 then
+_SH.safe(_SH.pbp.FireServer, _SH.pbp, _SH.vid)
+end
+end
+end
+end
+end)
+else _SH.stopLoop("ev_s") end
+end })
+_SH.esec:Toggle({ Title = "Auto Buy All Items", Value = false, Callback = function(state)
+if state then _SH.startLoop("ev_a", function()
+_SH.at = _SH.safe(_SH.bp.GetTiers, _SH.bp) or {}
+for _, tr3 in ipairs(_SH.at) do
+if tr3.items then
+for _, it3 in ipairs(tr3.items) do
+_SH.aid = nil
+if type(it3) == "table" then _SH.aid = it3.itemId or it3.id
+else _SH.aid = it3 end
+if _SH.aid then
+_SH.ap = _SH.bpPrice(_SH.aid)
+_SH.ab = _SH.safe(_SH.cur.Balance, _SH.cur, "Tickets")
+if _SH.ab and _SH.ab >= _SH.ap then
+_SH.ao = _SH.owned(_SH.aid)
+if _SH.ao ~= "owned" or _SH.otype(_SH.aid) == "Multiple" then
+_SH.ti2, _SH.un2, _SH.to4 = _SH.tierInfo(_SH.aid)
+if _SH.un2 and _SH.to4 then
+_SH.safe(_SH.pbp.FireServer, _SH.pbp, _SH.aid)
+end
+end
+end
+end
+end
+end
+end
+end)
+else _SH.stopLoop("ev_a") end
+end })
+end
+_SH.refreshAll = function()
+task.spawn(function()
+_SH.fetch()
+for tn, td in pairs(_SH.tok or {}) do
+td.dd:Refresh(_SH.buildTokOpts(tn), true)
+end
+if _SH.evDd then _SH.evDd:Refresh(_SH.buildEvOpts(), true) end
+end)
+end
+_SH.safe(_SH.inv.Observe, _SH.inv, function() _SH.refreshAll() end)
+_SH.safe(_SH.bp.Changed.Connect, _SH.bp.Changed, function() _SH.refreshAll() end)
+_SH.safe(_SH.cur.Changed.Connect, _SH.cur.Changed, function() _SH.refreshAll() end)
+end)
+end })
+end
 MiscTab:Section({ Title = "loc:SEC_EMOTE_CROUCH", TextSize = 20 })
 MiscTab:Divider()
 local EmoteFireServer = {}
@@ -5960,6 +6653,310 @@ emoteCrouchBtn.Visible = state
 end
 })
 MiscTab:Space()
+MiscTab:Section({ Title = "TAS", TextSize = 20 })
+_TAS = _TAS or {run = false, fr = {}, t0 = 0}
+_TAS.ch = function()
+_TAS.c = LocalPlayer.Character
+if _TAS.c then return _TAS.c end
+LocalPlayer.CharacterAdded:Wait()
+return _TAS.ch()
+end
+_TAS.rec = function()
+_TAS.fr = {}
+_TAS.run = true
+_TAS.t0 = tick()
+while _TAS.run do
+RunService.Heartbeat:Wait()
+_TAS.c = _TAS.ch()
+table.insert(_TAS.fr, {_TAS.c.HumanoidRootPart.CFrame, _TAS.c.Humanoid:GetState().Value, tick() - _TAS.t0})
+end
+end
+_TAS.stop = function()
+_TAS.run = false
+end
+_TAS.play = function()
+if #_TAS.fr == 0 then return end
+_TAS.c = _TAS.ch()
+_TAS.tp = tick()
+_TAS.n = #_TAS.fr
+_TAS.i = 1
+_TAS.lp = RunService.Heartbeat:Connect(function()
+_TAS.ct = tick()
+if (_TAS.ct - _TAS.tp) >= _TAS.fr[_TAS.n][3] then
+_TAS.lp:Disconnect()
+return
+end
+for j = _TAS.i, math.min(_TAS.i + 60, _TAS.n) do
+_TAS.f = _TAS.fr[j]
+if _TAS.f and _TAS.f[3] <= (_TAS.ct - _TAS.tp) then
+_TAS.i = j
+_TAS.c.HumanoidRootPart.CFrame = _TAS.f[1]
+_TAS.c.Humanoid:ChangeState(_TAS.f[2])
+end
+end
+end)
+end
+MiscTab:Button({ Title = "Start Recording", Callback = function() task.spawn(_TAS.rec) end })
+MiscTab:Button({ Title = "Stop Recording", Callback = function() _TAS.stop() end })
+MiscTab:Button({ Title = "Play", Callback = function() task.spawn(_TAS.play) end })
+MiscTab:Space()
+if UserInputService.TouchEnabled then
+_VH = _VH or {dir = {left = false, right = false, up = false, down = false}, tch = {}, en = false, btns = {}, hooked = false, mv = Vector3.new(0, 0, 0), vis = nil, ca = nil, cr = nil}
+_VH.setMv = function(d)
+_VH.mv = d
+if not _VH.hooked then
+_VH.ok, _VH.cm = pcall(function()
+return require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+end)
+if _VH.ok and _VH.cm then
+_VH.og = _VH.cm.GetMoveVector
+_VH.cm.GetMoveVector = function(...)
+_VH.inp = _VH.og(...)
+if _VH.inp.Magnitude > 0.1 then return _VH.inp end
+if _VH.en and (_VH.dir.left or _VH.dir.right or _VH.dir.up or _VH.dir.down) then return _VH.mv end
+return _VH.inp
+end
+_VH.hooked = true
+end
+end
+end
+_VH.apply = function()
+_VH.x = 0
+_VH.z = 0
+if _VH.dir.left then _VH.x = _VH.x - 1 end
+if _VH.dir.right then _VH.x = _VH.x + 1 end
+if _VH.dir.up then _VH.z = _VH.z - 1 end
+if _VH.dir.down then _VH.z = _VH.z + 1 end
+if _VH.x ~= 0 or _VH.z ~= 0 then
+_VH.mg = math.sqrt(_VH.x * _VH.x + _VH.z * _VH.z)
+if _VH.mg > 1 then _VH.x = _VH.x / _VH.mg _VH.z = _VH.z / _VH.mg end
+_VH.setMv(Vector3.new(_VH.x, 0, _VH.z))
+else
+_VH.setMv(Vector3.new(0, 0, 0))
+end
+end
+_VH.reset = function()
+_VH.dir.left = false
+_VH.dir.right = false
+_VH.dir.up = false
+_VH.dir.down = false
+_VH.tch = {}
+_VH.apply()
+end
+_VH.mkBtn = function(cfg)
+_VH.b = Instance.new("ImageButton")
+_VH.b.Name = cfg.Name
+_VH.b.ImageRectOffset = Vector2.new(1, 146)
+_VH.b.ImageRectSize = Vector2.new(144, 144)
+_VH.b.AutoButtonColor = false
+_VH.b.AnchorPoint = cfg.AnchorPoint or Vector2.new(0, 0.5)
+_VH.b.BackgroundColor3 = Color3.new(0, 0, 0)
+_VH.b.BackgroundTransparency = 0.5
+_VH.b.Position = cfg.Position
+_VH.b.Size = cfg.Size
+_VH.b.Parent = cfg.Parent
+_VH.b.Visible = cfg.Visible ~= nil and cfg.Visible or false
+_VH.crn = Instance.new("UICorner")
+_VH.crn.BottomLeftRadius = UDim.new(1, 0)
+_VH.crn.BottomRightRadius = UDim.new(1, 0)
+_VH.crn.TopLeftRadius = UDim.new(1, 0)
+_VH.crn.TopRightRadius = UDim.new(1, 0)
+_VH.crn.Parent = _VH.b
+_VH.str = Instance.new("UIStroke")
+_VH.str.Color = Color3.new(1, 1, 1)
+_VH.str.Thickness = 3
+_VH.str.Transparency = 0.8
+_VH.str.Parent = _VH.b
+_VH.inf = Instance.new("Frame")
+_VH.inf.AnchorPoint = Vector2.new(0.5, 0.5)
+_VH.inf.BackgroundTransparency = 1
+_VH.inf.Position = UDim2.new(0.5, 0, 0.5, 0)
+_VH.inf.Size = UDim2.new(1, 6, 1, 6)
+_VH.inf.Parent = _VH.b
+_VH.ins = Instance.new("UIStroke")
+_VH.ins.Thickness = 2
+_VH.ins.Transparency = 0.6
+_VH.ins.Parent = _VH.inf
+_VH.inc = Instance.new("UICorner")
+_VH.inc.BottomLeftRadius = UDim.new(1, 0)
+_VH.inc.BottomRightRadius = UDim.new(1, 0)
+_VH.inc.TopLeftRadius = UDim.new(1, 0)
+_VH.inc.TopRightRadius = UDim.new(1, 0)
+_VH.inc.Parent = _VH.inf
+_VH.txl = Instance.new("TextLabel")
+_VH.txl.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+_VH.txl.Text = cfg.Text
+_VH.txl.TextColor3 = Color3.new(1, 1, 1)
+_VH.txl.TextScaled = true
+_VH.txl.TextTransparency = 0.4
+_VH.txl.TextWrapped = true
+_VH.txl.AnchorPoint = Vector2.new(0.5, 0.5)
+_VH.txl.BackgroundTransparency = 1
+_VH.txl.Position = UDim2.new(0.51, 0, 0.5, -4)
+_VH.txl.Size = UDim2.new(1, 0, 1, 0)
+_VH.txl.Parent = _VH.b
+_VH.press = function()
+if _VH.en and cfg.Callback then cfg.Callback(true) end
+end
+_VH.rel = function()
+if _VH.en and cfg.Callback then cfg.Callback(false) end
+end
+_VH.b.MouseButton1Down:Connect(_VH.press)
+_VH.b.MouseButton1Up:Connect(_VH.rel)
+_VH.b.MouseLeave:Connect(_VH.rel)
+UserInputService.InputBegan:Connect(function(input, proc)
+if proc then return end
+if input.UserInputType == Enum.UserInputType.Touch then
+_VH.tp = input.Position
+_VH.bs = _VH.b.AbsoluteSize
+_VH.bp2 = _VH.b.AbsolutePosition
+if _VH.tp.X >= _VH.bp2.X and _VH.tp.X <= _VH.bp2.X + _VH.bs.X and _VH.tp.Y >= _VH.bp2.Y and _VH.tp.Y <= _VH.bp2.Y + _VH.bs.Y then
+if not _VH.tch[input] then
+_VH.tch[input] = true
+_VH.press()
+end
+end
+end
+end)
+UserInputService.InputEnded:Connect(function(input, proc)
+if input.UserInputType == Enum.UserInputType.Touch and _VH.tch[input] then
+_VH.tch[input] = nil
+_VH.rel()
+end
+end)
+return _VH.b
+end
+_VH.leaveState = function()
+_VH.pg = LocalPlayer:FindFirstChild("PlayerGui")
+if not _VH.pg then return false end
+_VH.gg = _VH.pg:FindFirstChild("Game")
+if not _VH.gg then return false end
+_VH.hd = _VH.gg:FindFirstChild("HUD")
+if not _VH.hd then return false end
+_VH.mb = _VH.hd:FindFirstChild("Mobile")
+if not _VH.mb then return false end
+_VH.ct2 = _VH.mb:FindFirstChild("Center")
+if not _VH.ct2 then return false end
+_VH.i1 = _VH.ct2:FindFirstChild("Interact")
+if not _VH.i1 then return false end
+_VH.i2 = _VH.i1:FindFirstChild("Interact")
+if not _VH.i2 then return false end
+_VH.ev = _VH.i2:FindFirstChild("ExitVehicle")
+if not _VH.ev then return false end
+return _VH.ev.Visible
+end
+_VH.updSys = function()
+_VH.should = _VH.leaveState()
+_VH.en = _VH.should
+if not _VH.en then _VH.reset() end
+for name, btn in pairs(_VH.btns) do
+if btn and btn.Parent then btn.Visible = _VH.should end
+end
+end
+_VH.monLeave = function(par)
+_VH.updSys()
+_VH.ca = par.ChildAdded:Connect(function(child)
+if child.Name == "ExitVehicle" then
+if _VH.vis then _VH.vis:Disconnect() _VH.vis = nil end
+_VH.vis = child:GetPropertyChangedSignal("Visible"):Connect(_VH.updSys)
+_VH.updSys()
+task.defer(_VH.updSys)
+end
+end)
+_VH.cr = par.ChildRemoved:Connect(function(child)
+if child.Name == "ExitVehicle" then
+if _VH.vis then _VH.vis:Disconnect() _VH.vis = nil end
+_VH.updSys()
+end
+end)
+_VH.ex = par:FindFirstChild("ExitVehicle")
+if _VH.ex then
+if _VH.vis then _VH.vis:Disconnect() end
+_VH.vis = _VH.ex:GetPropertyChangedSignal("Visible"):Connect(_VH.updSys)
+_VH.updSys()
+task.defer(_VH.updSys)
+end
+end
+_VH.mkAll = function()
+_VH.pg = LocalPlayer:FindFirstChild("PlayerGui")
+if not _VH.pg then return end
+_VH.gg = _VH.pg:FindFirstChild("Game")
+if not _VH.gg then return end
+_VH.hd = _VH.gg:FindFirstChild("HUD")
+if not _VH.hd then return end
+_VH.mb = _VH.hd:FindFirstChild("Mobile")
+if not _VH.mb then return end
+_VH.rp = _VH.mb:FindFirstChild("Right")
+if not _VH.rp then return end
+_VH.lp2 = _VH.mb:FindFirstChild("Left")
+if not _VH.lp2 then return end
+_VH.lmf = _VH.lp2:FindFirstChild("Mobile")
+if not _VH.lmf then return end
+_VH.ct2 = _VH.mb:FindFirstChild("Center")
+if not _VH.ct2 then return end
+_VH.i1 = _VH.ct2:FindFirstChild("Interact")
+if not _VH.i1 then return end
+_VH.i2 = _VH.i1:FindFirstChild("Interact")
+if not _VH.i2 then return end
+if not _VH.rp:FindFirstChild("VUp") then
+_VH.btns.VUp = _VH.mkBtn({Name = "VUp", Parent = _VH.rp, Text = "↑", Visible = false, Position = UDim2.new(-1.5, 0, -0.7, 0), Size = UDim2.new(1.39, 0, 1.39, 0), Callback = function(p)
+if p then _VH.dir.up = true else _VH.dir.up = false end
+_VH.apply()
+end})
+else
+_VH.btns.VUp = _VH.rp.VUp
+end
+if not _VH.rp:FindFirstChild("VDown") then
+_VH.btns.VDown = _VH.mkBtn({Name = "VDown", Parent = _VH.rp, Text = "↓", Visible = false, Position = UDim2.new(-3.2, 0, -0.7, 0), Size = UDim2.new(1.39, 0, 1.39, 0), Callback = function(p)
+if p then _VH.dir.down = true else _VH.dir.down = false end
+_VH.apply()
+end})
+else
+_VH.btns.VDown = _VH.rp.VDown
+end
+if not _VH.lmf:FindFirstChild("VLeft") then
+_VH.btns.VLeft = _VH.mkBtn({Name = "VLeft", Parent = _VH.lmf, Text = "←", Visible = false, Position = UDim2.new(0.4, 0, 0.66, 0), Size = UDim2.new(0.3, 0, 0.3, 0), Callback = function(p)
+if p then _VH.dir.left = true else _VH.dir.left = false end
+_VH.apply()
+end})
+else
+_VH.btns.VLeft = _VH.lmf.VLeft
+end
+if not _VH.lmf:FindFirstChild("VRight") then
+_VH.btns.VRight = _VH.mkBtn({Name = "VRight", Parent = _VH.lmf, Text = "→", Visible = false, Position = UDim2.new(0.8, 0, 0.66, 0), Size = UDim2.new(0.3, 0, 0.3, 0), Callback = function(p)
+if p then _VH.dir.right = true else _VH.dir.right = false end
+_VH.apply()
+end})
+else
+_VH.btns.VRight = _VH.lmf.VRight
+end
+_VH.monLeave(_VH.i2)
+end
+_VH.remove = function()
+for name, btn in pairs(_VH.btns) do
+if btn and btn.Parent then btn:Destroy() end
+end
+_VH.btns = {}
+if _VH.vis then _VH.vis:Disconnect() _VH.vis = nil end
+if _VH.ca then _VH.ca:Disconnect() _VH.ca = nil end
+if _VH.cr then _VH.cr:Disconnect() _VH.cr = nil end
+_VH.en = false
+_VH.reset()
+end
+_VH.add = function()
+_VH.pg = LocalPlayer:WaitForChild("PlayerGui")
+if _VH.pg:FindFirstChild("Game") then
+_VH.mkAll()
+else
+_VH.pg.ChildAdded:Connect(function(child)
+if child.Name == "Game" then _VH.mkAll() end
+end)
+end
+end
+MiscTab:Toggle({ Title = "Cars Touch HUD", Value = false, Callback = function(state)
+if state then _VH.add() else _VH.remove() end
+end })
+end
 UtilityTab:Section({ Title = "loc:SEC_MAP_ADJ", TextSize = 20 })
 UtilityTab:Toggle({
 Title = "Invis Walls Collide",
@@ -6004,6 +7001,164 @@ S.StopTroll()
 end
 end
 })
+do
+UtilityTab:Section({ Title = "Fling", TextSize = 20 })
+_FL = _FL or {h = false, mv = 0.1, p = 1e35, co = nil, rs = nil, te = false, tn = "", ta = "", hbc = nil, a = false, tgt = nil, tt = 0}
+_FL.loop = function()
+_FL.chr = LocalPlayer.Character
+if not _FL.chr then return end
+_FL.hrp = _FL.chr:FindFirstChild("HumanoidRootPart")
+if not _FL.hrp then return end
+while _FL.a and _FL.chr and _FL.hrp and _FL.hrp.Parent do
+_FL.v = _FL.hrp.Velocity
+_FL.hrp.Velocity = _FL.v * _FL.p + Vector3.new(0, _FL.p, 0)
+RunService.RenderStepped:Wait()
+_FL.hrp.Velocity = _FL.v
+RunService.Stepped:Wait()
+_FL.hrp.Velocity = _FL.v + Vector3.new(0, _FL.mv, 0)
+_FL.mv = -_FL.mv
+RunService.Heartbeat:Wait()
+end
+end
+_FL.start = function()
+if _FL.co then coroutine.close(_FL.co) _FL.co = nil end
+_FL.a = true
+_FL.co = coroutine.create(_FL.loop)
+coroutine.resume(_FL.co)
+end
+_FL.stop = function()
+if _FL.co then coroutine.close(_FL.co) _FL.co = nil end
+_FL.a = false
+_FL.chr = LocalPlayer.Character
+if _FL.chr then
+_FL.hrp = _FL.chr:FindFirstChild("HumanoidRootPart")
+if _FL.hrp then
+_FL.hrp.Velocity = Vector3.new(0, 0, 0)
+_FL.hrp.RotVelocity = Vector3.new(0, 0, 0)
+end
+end
+end
+_FL.upd = function()
+if (_FL.h or _FL.te) and not _FL.co then _FL.start()
+elseif not (_FL.h or _FL.te) and _FL.co then _FL.stop() end
+end
+_FL.find = function()
+_FL.pf = workspace:FindFirstChild("Players")
+if not _FL.pf then return nil end
+_FL.md = _FL.pf:GetChildren()
+_FL.fl = {}
+_FL.fc = 0
+for i = 1, #_FL.md do
+_FL.m = _FL.md[i]
+if _FL.m:IsA("Model") and _FL.m ~= LocalPlayer.Character then
+_FL.mn = _FL.m.Name
+_FL.an = _FL.m:GetAttribute("Name")
+_FL.at = _FL.m:GetAttribute("Team")
+_FL.inc = true
+if _FL.ta and _FL.ta ~= "" then
+if _FL.at ~= _FL.ta then _FL.inc = false end
+end
+if _FL.inc and _FL.tn and _FL.tn ~= "" then
+_FL.hs = (_FL.mn or "") .. " " .. (_FL.an or "") .. " " .. (_FL.at or "")
+if _FL.tn:sub(1, 1) == "!" then
+if _FL.hs:lower():find(_FL.tn:sub(2):lower(), 1, true) then _FL.inc = false end
+elseif _FL.tn:sub(1, 2) == "==" then
+_FL.ex = _FL.tn:sub(3):lower()
+if not (_FL.mn:lower() == _FL.ex or (_FL.an and _FL.an:lower() == _FL.ex) or (_FL.at and _FL.at:lower() == _FL.ex)) then _FL.inc = false end
+else
+if not _FL.hs:lower():find(_FL.tn:lower(), 1, true) then _FL.inc = false end
+end
+end
+if _FL.inc then
+_FL.h2 = _FL.m:FindFirstChild("HumanoidRootPart")
+if _FL.h2 then
+_FL.fc = _FL.fc + 1
+_FL.fl[_FL.fc] = _FL.h2
+end
+end
+end
+end
+if _FL.fc == 0 then return nil end
+return _FL.fl[math.random(_FL.fc)]
+end
+_FL.newT = function()
+_FL.tgt = _FL.find()
+_FL.tt = tick()
+end
+_FL.hb = function()
+if _FL.te then
+if not _FL.hbc then
+_FL.tgt = nil
+_FL.tt = 0
+_FL.hbc = RunService.Heartbeat:Connect(function()
+_FL.chr = LocalPlayer.Character
+if not _FL.chr then return end
+_FL.hrp = _FL.chr:FindFirstChild("HumanoidRootPart")
+if not _FL.hrp then return end
+if not _FL.tgt or not _FL.tgt.Parent or (tick() - _FL.tt >= 10) then
+_FL.newT()
+end
+if _FL.tgt then
+teleportToCFrame(_FL.tgt.CFrame + Vector3.new(0, math.random(-5, 5), 0))
+end
+end)
+end
+else
+if _FL.hbc then
+_FL.hbc:Disconnect()
+_FL.hbc = nil
+end
+_FL.tgt = nil
+_FL.tt = 0
+end
+end
+_FL.added = function(c)
+if _FL.h or _FL.te then
+task.wait(1)
+_FL.upd()
+_FL.hb()
+else
+task.wait(0.5)
+_FL.hrp = c:FindFirstChild("HumanoidRootPart")
+if _FL.hrp then
+_FL.hrp.Velocity = Vector3.new(0, 0, 0)
+_FL.hrp.RotVelocity = Vector3.new(0, 0, 0)
+end
+end
+end
+UtilityTab:Toggle({ Title = "Touch Fling", Value = false, Callback = function(state)
+_FL.h = state
+if state then
+if not _FL.rs then
+_FL.rs = LocalPlayer.CharacterAdded:Connect(_FL.added)
+end
+else
+if _FL.rs then
+_FL.rs:Disconnect()
+_FL.rs = nil
+end
+end
+_FL.upd()
+_FL.hb()
+end })
+UtilityTab:Toggle({ Title = "Fling Target", Value = false, Callback = function(state)
+_FL.te = state
+_FL.upd()
+_FL.hb()
+end })
+UtilityTab:Input({ Title = "Target Name", Placeholder = "Name (! skip, == exact)", Callback = function(value)
+_FL.tn = value or ""
+end })
+UtilityTab:Input({ Title = "Attribute Team", Placeholder = "Team (optional)", Callback = function(value)
+_FL.ta = value or ""
+end })
+UtilityTab:Input({ Title = "Fling Power", Placeholder = "1e35", Callback = function(value)
+if value and value ~= "" then
+_FL.pn = tonumber(value)
+if _FL.pn then _FL.p = _FL.pn end
+end
+end })
+end
 do
 VisualTab:Section({ Title = "loc:SEC_CAM_LIGHT", TextSize = 20 })
 cameraStretchConnection = nil
@@ -6149,6 +7304,95 @@ coverScreen.Visible = true
 end
 end
 })
+end
+do
+if getrawmetatable and newcclosure and setreadonly then
+VisualTab:Section({ Title = "Cola", TextSize = 20 })
+_CL = _CL or {}
+_CL.ta = ReplicatedStorage.Events:FindFirstChild("ToolAction")
+_CL.cm = require(ReplicatedStorage.Tools.Cola)
+_CL.info = _CL.cm.Tasks[1].AutomaticFunctions[2].Methods[1].Info
+_CL.e = false
+_CL.m = false
+_CL.d = tonumber(_CL.info.Duration) or 10
+_CL.s = tonumber(_CL.info.SpeedBoost) or 15
+_CL.on = false
+_CL.old = nil
+_CL.vig = function()
+fireSignalFunc(ReplicatedStorage.Events.SharedUISetType.OnClientEvent, "Vignette", _CL.info.Color, _CL.m and _CL.d or _CL.info.Duration, true)
+end
+_CL.boost = function(t)
+_CL.ch = LocalPlayer.Character
+if _CL.ch then
+_CL.tag = _CL.ch:GetAttribute("Tag")
+if _CL.tag then
+fireSignalFunc(ReplicatedStorage.Events.CharacterTask.OnClientEvent, _CL.tag, "Movement", {SpeedChange = {Value = _CL.m and _CL.s or _CL.info.SpeedBoost, Type = t or "Cola", Length = _CL.m and _CL.d or _CL.info.Duration}})
+end
+end
+end
+_CL.apply = function()
+if _CL.on then return end
+_CL.ta = _CL.ta or ReplicatedStorage.Events:FindFirstChild("ToolAction")
+_CL.gmt = getrawmetatable(game)
+_CL.old = _CL.gmt.__namecall
+setreadonly(_CL.gmt, false)
+_CL.gmt.__namecall = newcclosure(function(self, ...)
+_CL.mc = getnamecallmethod()
+_CL.args = {...}
+if self == _CL.ta and (_CL.mc == "FireServer" or _CL.mc == "fireServer") then
+for _, v in ipairs(_CL.args) do
+if typeof(v) == "buffer" then
+_CL.ct = buffer.tostring(v)
+if _CL.ct == "\1\1\1" and _CL.e then return end
+if _CL.ct == "\1\2\1" then
+if _CL.e then
+_CL.boost()
+task.wait()
+_CL.vig()
+return
+elseif _CL.m then
+task.spawn(function()
+_CL.boost("FakeCola")
+_CL.vig()
+end)
+return
+end
+end
+end
+end
+end
+return _CL.old(self, ...)
+end)
+setreadonly(_CL.gmt, true)
+_CL.on = true
+end
+_CL.remove = function()
+if not _CL.on then return end
+setreadonly(_CL.gmt, false)
+_CL.gmt.__namecall = _CL.old
+setreadonly(_CL.gmt, true)
+_CL.on = false
+end
+_CL.chk = function()
+if _CL.e or _CL.m then _CL.apply() else _CL.remove() end
+end
+VisualTab:Toggle({ Title = "Endless Cola", Value = false, Callback = function(state)
+_CL.e = state
+_CL.chk()
+end })
+VisualTab:Toggle({ Title = "Cola Booster", Value = false, Callback = function(state)
+_CL.m = state
+_CL.chk()
+end })
+VisualTab:Input({ Title = "Cola Duration Boost", Placeholder = "10", NumbersOnly = true, Callback = function(v)
+_CL.n = tonumber(v)
+if _CL.n then _CL.d = _CL.n end
+end })
+VisualTab:Input({ Title = "Cola Speed Boost", Placeholder = "15", NumbersOnly = true, Callback = function(v)
+_CL.n = tonumber(v)
+if _CL.n then _CL.s = _CL.n end
+end })
+end
 end
 do
 UtilityTab:Section({ Title = "loc:SEC_LAG_SWITCH", TextSize = 20 })
@@ -7309,7 +8553,7 @@ Border = true
 SettingsTab:Dropdown({
 Title = "loc:LANG_SELECT",
 Desc = "loc:LANG_DESC",
-Values = { "English", "TÃ¼rkÃ§e", "Ð ÑƒÑÑÐºÐ¸Ð¹", "Tiáº¿ng Viá»‡t", "à¤¹à¤¿à¤¨à¥à¤¦à¥€", "Bahasa Indonesia" },
+Values = { "English", "TÃ¼rkÃ§e", "Ð ÑƒÑÑÐºÐ¸Ð¹", "Tiáº¿ng Viá»‡t", "à¤¹à¤¿à¤¨à¥à¤¦à¥€", "Bahasa Indonesia" },
 Value = "English",
 Callback = function(selectedLang)
 if selectedLang == "TÃ¼rkÃ§e" then
@@ -7320,7 +8564,7 @@ Content = "ArayÃ¼z dili TÃ¼rkÃ§e yapÄ±ldÄ±!",
 Duration = 2,
 Icon = "languages"
 })
-elseif selectedLang == "Ð ÑƒÑÑÐºÐ¸Ð¹" then
+elseif selectedLang == "Ð ÑƒÑÑÐºÐ¸Ð¹" then
 WindUI:SetLanguage("ru")
 WindUI:Notify({
 Title = "Ð¯Ð·Ñ‹Ðº Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½",
