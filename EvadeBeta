@@ -1943,10 +1943,20 @@ end
 _KB.mkT = function(box, el, cfg)
 if not el then return end
 pcall(function()
-box:Keybind({Title = _KB.rsl(cfg.Title) .. " Keybind", Value = "NONE", Callback = function()
+_KB.kb = box:Keybind({Title = _KB.rsl(cfg.Title) .. " Keybind", Value = "NONE", Callback = function()
 pcall(function() el:Set(not _KB.st[cfg]) end)
 end})
+_KB.rows = _KB.rows or {}
+table.insert(_KB.rows, {el = _KB.kb, base = cfg.Title})
 end)
+end
+_KB.refreshRows = function()
+if not _KB.rows then return end
+for _, r in ipairs(_KB.rows) do
+if r.el and r.el.SetTitle then
+pcall(function() r.el:SetTitle(_KB.rsl(r.base) .. " Keybind") end)
+end
+end
 end
 _KB.mkB = function(box, el, cfg)
 if not el then return end
@@ -1956,6 +1966,8 @@ _KB.kb = box:Keybind({Title = _KB.rsl(cfg.Title) .. " Keybind", Value = "NONE", 
 _KB.f = _KB.cbmap[el]
 if _KB.f then pcall(_KB.f) end
 end})
+_KB.rows = _KB.rows or {}
+table.insert(_KB.rows, {el = _KB.kb, base = cfg.Title})
 _KB.dmap = _KB.dmap or {}
 _KB.dmap[el] = {kb = _KB.kb, od = el.Destroy}
 el.Destroy = function(self, ...)
@@ -7650,7 +7662,11 @@ ShopTab = Window:Tab({ Title = "loc:TAB_SHOP", Icon = "shopping-cart" })
 ShopTab:Section({ Title = "loc:SEC_DAILY", TextSize = 20 })
 _SH = _SH or {loaded = false, ids = {}, names = {}, byName = {}, sel = nil, lf = {}}
 _SH.loadBtn = ShopTab:Button({ Title = "loc:BTN_SHOPLOAD", Callback = function()
-pcall(function() _SH.loadBtn:Destroy() end)
+if _SH.loaded then
+WindUI:Notify({ Title = "Shop", Content = _T("Shop already loaded", "Mağaza zaten yüklü"), Duration = 2 })
+return
+end
+_SH.loaded = true
 pcall(function()
 _SH.inv = require(ReplicatedStorage.Shared.UserData.ClientHooks.useInventory)
 _SH.reg = require(ReplicatedStorage.Items.Registry)
@@ -10667,6 +10683,7 @@ Values = { "English", "Türkçe" },
 Value = "English",
 Callback = function(selectedLang)
 _LANG = selectedLang
+if _KB and _KB.refreshRows then pcall(_KB.refreshRows) end
 if selectedLang == "Türkçe" then
 WindUI:SetLanguage("tr")
 WindUI:Notify({
