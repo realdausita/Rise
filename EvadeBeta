@@ -5994,7 +5994,7 @@ cleanupElements(ESPManager.TicketElements)
 cleanupElements(ESPManager.VehicleElements)
 end
 function updateGenericESP(targets, color, settings, elementsTable)
-if not settings.Boxes and not settings.Names and not settings.Distance then
+if not settings.Boxes and not settings.Names and not settings.Distance and not settings.Tracers then
 if next(elementsTable) == nil then return end
 targets = {}
 end
@@ -6461,6 +6461,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_PNTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.Settings.NameTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.Settings.Names then updateESP() end
@@ -6486,6 +6487,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_PDTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.Settings.DistTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.Settings.Distance then updateESP() end
@@ -6542,12 +6544,10 @@ end
 })
 VisualTab:Slider({
 Title = "loc:ESP_PTTR",
-Value = 0,
-Min = 0,
-Max = 1,
-Step = 0.05,
-Callback = function(n)
-if n then ESPManager.Settings.TracerTransp = math.clamp(n, 0, 1) end
+Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.1,
+Callback = function(value)
+ESPManager.Settings.TracerTransp = math.clamp(tonumber(value) or 0, 0, 1)
 end
 })
 VisualTab:Section({ Title = "loc:ESP_DSEC", TextSize = 20 })
@@ -6637,6 +6637,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_DNTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.DownedSettings.NameTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.DownedSettings.Names then updateESP() end
@@ -6662,6 +6663,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_DDTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.DownedSettings.DistTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.DownedSettings.Distance then updateESP() end
@@ -6718,12 +6720,10 @@ end
 })
 VisualTab:Slider({
 Title = "loc:ESP_DTTR",
-Value = 0,
-Min = 0,
-Max = 1,
-Step = 0.05,
-Callback = function(n)
-if n then ESPManager.DownedSettings.TracerTransp = math.clamp(n, 0, 1) end
+Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.1,
+Callback = function(value)
+ESPManager.DownedSettings.TracerTransp = math.clamp(tonumber(value) or 0, 0, 1)
 end
 })
 VisualTab:Section({ Title = "loc:ESP_NSEC", TextSize = 20 })
@@ -6813,6 +6813,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_NNTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.NextbotSettings.NameTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.NextbotSettings.Names then updateESP() end
@@ -6838,6 +6839,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_NDTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.NextbotSettings.DistTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.NextbotSettings.Distance then updateESP() end
@@ -6894,12 +6896,10 @@ end
 })
 VisualTab:Slider({
 Title = "loc:ESP_NTTR",
-Value = 0,
-Min = 0,
-Max = 1,
-Step = 0.05,
-Callback = function(n)
-if n then ESPManager.NextbotSettings.TracerTransp = math.clamp(n, 0, 1) end
+Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.1,
+Callback = function(value)
+ESPManager.NextbotSettings.TracerTransp = math.clamp(tonumber(value) or 0, 0, 1)
 end
 })
 VisualTab:Section({ Title = "loc:ESP_TSEC", TextSize = 20 })
@@ -6989,6 +6989,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_TNTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.TicketSettings.NameTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.TicketSettings.Names then updateESP() end
@@ -7014,6 +7015,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_TDTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.TicketSettings.DistTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.TicketSettings.Distance then updateESP() end
@@ -7070,12 +7072,10 @@ end
 })
 VisualTab:Slider({
 Title = "loc:ESP_TTTR",
-Value = 0,
-Min = 0,
-Max = 1,
-Step = 0.05,
-Callback = function(n)
-if n then ESPManager.TicketSettings.TracerTransp = math.clamp(n, 0, 1) end
+Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.1,
+Callback = function(value)
+ESPManager.TicketSettings.TracerTransp = math.clamp(tonumber(value) or 0, 0, 1)
 end
 })
 VisualTab:Section({ Title = "loc:ESP_VSEC", TextSize = 20 })
@@ -7165,6 +7165,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_VNTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.VehicleSettings.NameTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.VehicleSettings.Names then updateESP() end
@@ -7190,6 +7191,7 @@ end
 VisualTab:Slider({
 Title = "loc:ESP_VDTRAN",
 Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.05,
 Callback = function(value)
 ESPManager.VehicleSettings.DistTransp = math.clamp(tonumber(value) or 0, 0, 1)
 if ESPManager.VehicleSettings.Distance then updateESP() end
@@ -7246,12 +7248,10 @@ end
 })
 VisualTab:Slider({
 Title = "loc:ESP_VTTR",
-Value = 0,
-Min = 0,
-Max = 1,
-Step = 0.05,
-Callback = function(n)
-if n then ESPManager.VehicleSettings.TracerTransp = math.clamp(n, 0, 1) end
+Value = {Min = 0, Max = 1, Default = 0},
+Step = 0.1,
+Callback = function(value)
+ESPManager.VehicleSettings.TracerTransp = math.clamp(tonumber(value) or 0, 0, 1)
 end
 })
 function scanDescendantsAsync(root, matchFolderName, targetName, callback)
