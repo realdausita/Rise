@@ -5740,7 +5740,7 @@ local tc = espTracerColor(set, Color3.fromRGB(255, 255, 255))
 if esp._lastTC ~= tc then esp._lastTC = tc line.Color = tc end
 local th = math.clamp(tonumber(set.TracerThick) or 2, 1, 10)
 if esp._lastTTh ~= th then esp._lastTTh = th line.Thickness = th end
-local ttr = math.clamp(tonumber(set.TracerTransp) or 0, 0, 1)
+local ttr = 1 - math.clamp(tonumber(set.TracerTransp) or 0, 0, 1)
 if esp._lastTTr ~= ttr then esp._lastTTr = ttr line.Transparency = ttr end
 local show = false
 if rp and rp.Parent then
@@ -6170,7 +6170,7 @@ return effects and effects:FindFirstChild("Tickets")
 end
 function updateESP()
 if _CFG_BULK then return end
-if not ESPManager.Rendering or not ESPManager.WindowFocused then return end
+if not ESPManager.Rendering then return end
 if not workspace.CurrentCamera then return end
 ESPManager.UpdateCounter = ESPManager.UpdateCounter + 1
 if ESPManager.UpdateCounter % ESPManager.UpdateInterval ~= 0 then return end
@@ -6343,9 +6343,6 @@ cleanupESP()
 end
 end)
 UserInputService.WindowFocusReleased:Connect(function()
-ESPManager.WindowFocused = false
-ESPManager.Rendering = false
-cleanupESP()
 end)
 UserInputService.WindowFocused:Connect(function()
 ESPManager.WindowFocused = true
